@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { Component } from 'react'
 
-const Idea = ({idea}) => (
-  <div className="tile">
-    <h4>{idea.title}</h4>
-    <p>{idea.body}</p>
-  </div>
-);
+class Idea extends Component {
+  handleClick = () => { this.props.onClick(this.props.idea.id) }
 
-export default Idea;
+  handleDelete = () => { this.props.onDelete(this.props.idea.id) }
+
+  render() {
+    const { title, body } = this.props.idea
+
+    return (
+      <div className="tile">
+        <span className="deleteButton" onClick={this.handleDelete}>x</span>
+        <h4 onClick={this.handleClick}>{title}</h4>
+        <p onClick={this.handleClick}>{body}</p>
+      </div>
+    )
+  }
+}
+
+export default Idea
