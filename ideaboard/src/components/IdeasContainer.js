@@ -2,12 +2,14 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import Idea from './Idea'
 import IdeaForm from './IdeaForm'
+import Notification from './Notification'
 
 class IdeasContainer extends Component {
   state = {
     ideas: [],
     editingIdeaId: null,
-    notification: ''
+    notification: '',
+    transitionIn: false
   }
 
   componentDidMount() {
@@ -33,7 +35,8 @@ class IdeasContainer extends Component {
     const { ideas } = this.state
     this.setState({
       ideas: ideas.map(x => x.id === idea.id ? idea : x),
-      notification: 'All changes saved'
+      notification: 'All changes saved',
+      transitionIn: true
     })
   }
 
@@ -46,14 +49,14 @@ class IdeasContainer extends Component {
     }).catch(error => console.log(error))
   }
 
-  resetNotification = () => {this.setState({notification: ''})}
+  resetNotification = () => {this.setState({notification: '', transitionIn: false})}
 
   enableEditing = (id) => {
     this.setState({editingIdeaId: id}, () => { this.title.focus() })
   }
 
   render() {
-    const { ideas, editingIdeaId, notification } = this.state
+    const { ideas, editingIdeaId, notification, transitionIn } = this.state
 
     return (
       <div>
@@ -61,9 +64,7 @@ class IdeasContainer extends Component {
           <button className="newIdeaButton" onClick={this.addNewIdea} >
             New Idea
           </button>
-          <span className="notification">
-            {notification}
-          </span>
+          <Notification in={transitionIn} notification={notification} />
         </div>
         {ideas.map(idea => {
           if(editingIdeaId === idea.id) {
