@@ -3,17 +3,27 @@ import axios from 'axios'
 import Idea from './Idea'
 import IdeaForm from './IdeaForm'
 import Notification from './Notification'
+import Sort from './Sort'
 
 class IdeasContainer extends Component {
   state = {
     ideas: [],
     editingIdeaId: null,
     notification: '',
-    transitionIn: false
+    transitionIn: false,
+    sortBy: 'createdAt'
   }
 
   componentDidMount() {
-    axios.get('http://localhost:3001/api/v1/ideas.json')
+    this.fetchIdeas()
+  }
+
+  fetchIdeas = () => {
+    axios.get('http://localhost:3001/api/v1/ideas', {
+      params: {
+        sort_by: this.state.sortBy
+      }
+    })
     .then(response => {
       this.setState({ideas: response.data})
     })
@@ -55,8 +65,12 @@ class IdeasContainer extends Component {
     this.setState({editingIdeaId: id}, () => { this.title.focus() })
   }
 
+  changeSort = (value) => {
+    this.setState({sortBy: value}, () => this.fetchIdeas())
+  }
+
   render() {
-    const { ideas, editingIdeaId, notification, transitionIn } = this.state
+    const { ideas, editingIdeaId, notification, transitionIn, sortBy } = this.state
 
     return (
       <div>
@@ -64,6 +78,7 @@ class IdeasContainer extends Component {
           <button className="newIdeaButton" onClick={this.addNewIdea} >
             New Idea
           </button>
+          <Sort sortBy={sortBy} onChange={this.changeSort} />
           <Notification in={transitionIn} notification={notification} />
         </div>
         {ideas.map(idea => {

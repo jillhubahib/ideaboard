@@ -1,7 +1,9 @@
 module Api::V1
   class IdeasController < ApplicationController
     def index
-      @ideas = Idea.order("created_at desc")
+      sort   = params["sort_by"].underscore
+      order  = sort == "created_at" ? "desc" : "asc"
+      @ideas = Idea.order("#{sort} #{order}")
       render json: @ideas
     end
 
